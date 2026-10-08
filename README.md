@@ -125,9 +125,10 @@ Photos are stored in the database, so they survive restarts and redeploys with n
 
 1. Push this folder to a GitHub repo (already done: github.com/wendle36508/campus-marketplace).
 2. At https://render.com, choose **New → Blueprint** and pick the repo. Render reads `render.yaml`, creates a free Postgres database for the app, and asks for:
-   - `ANTHROPIC_API_KEY`: your Claude API key
    - `ADMIN_EMAILS`: your @babson.edu email
 3. Deploy. Your link is `https://campus-marketplace-xxxx.onrender.com`. Open it on your phone and sign in with your Babson email.
+
+**AI pricing starts in demo mode** (sample prices). To turn on real Claude pricing, add `ANTHROPIC_API_KEY` in Render's Environment tab.
 
 **Email verification is off in the hosted prototype.** Only `@babson.edu` addresses are accepted, but the 6-digit code is shown on screen instead of emailed, so anyone who types a Babson address can sign in as it. That's fine for testing with friends, not for a real launch. To turn real emails on, set up Brevo (see "Email sending" above), then in Render's Environment tab set `EMAIL_PROVIDER=brevo`, `DEV_SHOW_CODES=false`, `BREVO_API_KEY` and `EMAIL_FROM`.
 
