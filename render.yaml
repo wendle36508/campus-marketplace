@@ -15,9 +15,11 @@ services:
         value: "22"
       - key: APP_NAME
         value: "[APP NAME]"
-      # Postgres connection string from Neon (or any Postgres)
+      # Render's own Postgres, created by this Blueprint (see databases below)
       - key: DATABASE_URL
-        sync: false
+        fromDatabase:
+          name: campus-marketplace-db
+          property: connectionString
       # Claude API key for photo price suggestions
       - key: ANTHROPIC_API_KEY
         sync: false
@@ -35,3 +37,11 @@ services:
       # Set to "false" to launch with no demo listings
       - key: SEED_DEMO_DATA
         value: "true"
+
+# Free Render Postgres. Render's free databases expire after 30 days; upgrade
+# it in the Render dashboard, or point DATABASE_URL at Neon/Supabase instead.
+databases:
+  - name: campus-marketplace-db
+    plan: free
+    databaseName: marketplace
+    user: marketplace

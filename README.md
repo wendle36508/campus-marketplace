@@ -121,19 +121,17 @@ Set `ADMIN_EMAILS` to your own school email (comma-separate several). That accou
 
 Photos are stored in the database, so they survive restarts and redeploys with no extra storage service. Each photo is resized on the phone first (about 150-400 KB). A free Neon database (0.5 GB) holds roughly a thousand listings' worth of photos; move photos to S3 or Cloudflare R2 when you outgrow that (`server/routes/photos.js`).
 
-## Putting it online (Render + Neon, free)
+## Putting it online (Render, free)
 
 1. Push this folder to a GitHub repo (already done: github.com/wendle36508/campus-marketplace).
-2. Create a free Postgres database at https://neon.tech and copy the connection string.
-3. At https://render.com, choose **New → Blueprint** and pick the repo. Render reads `render.yaml` and asks for:
-   - `DATABASE_URL`: the Neon connection string
+2. At https://render.com, choose **New → Blueprint** and pick the repo. Render reads `render.yaml`, creates a free Postgres database for the app, and asks for:
    - `ANTHROPIC_API_KEY`: your Claude API key
    - `ADMIN_EMAILS`: your @babson.edu email
-4. Deploy. Your link is `https://campus-marketplace-xxxx.onrender.com`. Open it on your phone and sign in with your Babson email.
+3. Deploy. Your link is `https://campus-marketplace-xxxx.onrender.com`. Open it on your phone and sign in with your Babson email.
 
 **Email verification is off in the hosted prototype.** Only `@babson.edu` addresses are accepted, but the 6-digit code is shown on screen instead of emailed, so anyone who types a Babson address can sign in as it. That's fine for testing with friends, not for a real launch. To turn real emails on, set up Brevo (see "Email sending" above), then in Render's Environment tab set `EMAIL_PROVIDER=brevo`, `DEV_SHOW_CODES=false`, `BREVO_API_KEY` and `EMAIL_FROM`.
 
-Render's free plan sleeps after 15 minutes without visitors, so the first visit after a break takes about 30 seconds to load. The $7/month plan stays awake.
+Render's free plan sleeps after 15 minutes without visitors, so the first visit after a break takes about 30 seconds to load. The $7/month plan stays awake. Render's free database expires after 30 days; before then, upgrade it in Render or switch `DATABASE_URL` to a free Neon or Supabase database.
 
 ## Adding another college
 
