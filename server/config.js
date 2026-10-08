@@ -30,6 +30,7 @@ const config = {
     provider: emailProvider,
     from: env.EMAIL_FROM || 'Campus Marketplace <onboarding@resend.dev>',
     resendApiKey: env.RESEND_API_KEY || '',
+    brevoApiKey: env.BREVO_API_KEY || '',
     smtp: {
       host: env.SMTP_HOST || '',
       port: Number(env.SMTP_PORT || 587),

@@ -1,5 +1,7 @@
 // Sends verification emails. Pick a provider with EMAIL_PROVIDER:
 //   console  - prints the code to the server log (default, no setup)
+//   brevo    - https://brevo.com, needs BREVO_API_KEY; can send from a verified
+//              personal address (e.g. a Gmail account), no domain needed
 //   resend   - https://resend.com, needs RESEND_API_KEY and a verified sender domain
 //   smtp     - any SMTP server (Gmail app password, SendGrid, Postmark, SES...)
 const config = require('../config');
@@ -26,9 +28,28 @@ function buildEmail({ code, magicUrl, schoolName }) {
   return { subject, text, html };
 }
 
+// '"Name" <a@b.com>' or 'a@b.com' -> { name, email }
+function parseFrom(from) {
+  const m = /^(.*)<([^>]+)>\s*$/.exec(from);
+  if (!m) return { name: config.appName, email: from.trim() };
+  return { name: m[1].trim().replace(/^"|"$/g, '') || config.appName, email: m[2].trim() };
+}
+
 async function sendVerificationEmail({ to, code, magicUrl, schoolName }) {
   const msg = buildEmail({ code, magicUrl, schoolName });
   const provider = config.email.provider;
+
+  if (provider === 'brevo') {
+    if (!config.email.brevoApiKey) throw new Error('BREVO_API_KEY is not set');
+    const sender = parseFrom(config.email.from);
+    const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: { 'api-key': config.email.brevoApiKey, 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ sender, to: [{ email: to }], subject: msg.subject, textContent: msg.text, htmlContent: msg.html }),
+    });
+    if (!res.ok) throw new Error(`Brevo error ${res.status}: ${await res.text()}`);
+    return;
+  }
 
   if (provider === 'resend') {
     if (!config.email.resendApiKey) throw new Error('RESEND_API_KEY is not set');

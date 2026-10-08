@@ -21,20 +21,13 @@ services:
       # Claude API key for photo price suggestions
       - key: ANTHROPIC_API_KEY
         sync: false
-      # Verification emails. Defaults are for a Gmail account with an app password.
+      # Verification emails via Brevo's API. (Render's free plan blocks
+      # outgoing SMTP, so Gmail SMTP only works on a paid plan.)
       - key: EMAIL_PROVIDER
-        value: smtp
-      - key: SMTP_HOST
-        value: smtp.gmail.com
-      - key: SMTP_PORT
-        value: "465"
-      - key: SMTP_SECURE
-        value: "true"
-      - key: SMTP_USER
+        value: brevo
+      - key: BREVO_API_KEY
         sync: false
-      - key: SMTP_PASS
-        sync: false
-      # e.g. "[APP NAME] <yourapp@gmail.com>"
+      # The sender you verified in Brevo, e.g. "[APP NAME] <yourapp@gmail.com>"
       - key: EMAIL_FROM
         sync: false
       # Your own @babson.edu email(s), comma separated, to get the admin dashboard

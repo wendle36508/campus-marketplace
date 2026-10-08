@@ -57,9 +57,21 @@ Copy `.env.example` to `.env`, fill in what you need, and restart (`npm start`).
 
 Pick one.
 
-**Resend (recommended, easiest).** Free tier is 3,000 emails/month.
+**Brevo (recommended, no domain needed).** Free tier is 300 emails/day.
+1. Sign up at https://brevo.com.
+2. Under **Senders & IPs → Senders**, add the address emails should come from (a new Gmail account for the app works) and click the confirmation link Brevo sends it.
+3. Under **SMTP & API → API keys**, create an API key.
+4. In `.env`:
+   ```
+   EMAIL_PROVIDER=brevo
+   BREVO_API_KEY=xkeysib-...
+   EMAIL_FROM=[APP NAME] <yourapp@gmail.com>
+   ```
+Emails sent from a Gmail address through a service can land in junk folders, so tell your first testers to check junk. Sending from your own domain fixes that later.
+
+**Resend** (needs a domain you own). Free tier is 3,000 emails/month.
 1. Sign up at https://resend.com and create an API key.
-2. Add and verify your sending domain (Resend gives you DNS records to add). Until it's verified you can only send to your own address.
+2. Add and verify your sending domain (Resend gives you DNS records to add).
 3. In `.env`:
    ```
    EMAIL_PROVIDER=resend
@@ -67,7 +79,7 @@ Pick one.
    EMAIL_FROM=[APP NAME] <verify@yourdomain.com>
    ```
 
-**Any SMTP server** (SendGrid, Postmark, Amazon SES, or a Gmail account with an app password for quick testing):
+**Any SMTP server** (SendGrid, Postmark, Amazon SES, or Gmail with an app password). Note that Render's free plan blocks outgoing SMTP, so use Brevo or Resend there:
 ```
 EMAIL_PROVIDER=smtp
 SMTP_HOST=smtp.sendgrid.net
@@ -111,13 +123,13 @@ Photos are stored in the database, so they survive restarts and redeploys with n
 
 ## Putting it online (Render + Neon, free)
 
-1. Push this folder to a GitHub repo.
+1. Push this folder to a GitHub repo (already done: github.com/wendle36508/campus-marketplace).
 2. Create a free Postgres database at https://neon.tech and copy the connection string.
 3. At https://render.com, choose **New → Blueprint** and pick the repo. Render reads `render.yaml` and asks for:
    - `DATABASE_URL`: the Neon connection string
    - `ANTHROPIC_API_KEY`: your Claude API key
-   - `SMTP_USER` / `SMTP_PASS`: the Gmail address and its app password (or switch `EMAIL_PROVIDER` to `resend`)
-   - `EMAIL_FROM`: e.g. `[APP NAME] <yourapp@gmail.com>`
+   - `BREVO_API_KEY`: your Brevo API key
+   - `EMAIL_FROM`: the sender you verified in Brevo, e.g. `[APP NAME] <yourapp@gmail.com>`
    - `ADMIN_EMAILS`: your @babson.edu email
 4. Deploy. Your link is `https://campus-marketplace-xxxx.onrender.com`. Open it on your phone and sign in with your Babson email.
 
