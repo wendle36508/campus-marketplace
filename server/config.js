@@ -39,8 +39,9 @@ const config = {
       secure: bool(env.SMTP_SECURE, false),
     },
   },
-  // In dev, show the verification code on screen so you can demo on a phone
-  // without access to the server console. Never enable this in production.
+  // Show the verification code on screen instead of emailing it. On by default
+  // in local dev; the hosted prototype turns it on too (render.yaml) so testers
+  // don't need email. Turn it off once real email sending is set up.
   devShowCodes: bool(env.DEV_SHOW_CODES, emailProvider === 'console' && env.NODE_ENV !== 'production'),
 
   // School emails that get the admin dashboard, comma separated.

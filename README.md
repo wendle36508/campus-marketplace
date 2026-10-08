@@ -128,10 +128,10 @@ Photos are stored in the database, so they survive restarts and redeploys with n
 3. At https://render.com, choose **New → Blueprint** and pick the repo. Render reads `render.yaml` and asks for:
    - `DATABASE_URL`: the Neon connection string
    - `ANTHROPIC_API_KEY`: your Claude API key
-   - `BREVO_API_KEY`: your Brevo API key
-   - `EMAIL_FROM`: the sender you verified in Brevo, e.g. `[APP NAME] <yourapp@gmail.com>`
    - `ADMIN_EMAILS`: your @babson.edu email
 4. Deploy. Your link is `https://campus-marketplace-xxxx.onrender.com`. Open it on your phone and sign in with your Babson email.
+
+**Email verification is off in the hosted prototype.** Only `@babson.edu` addresses are accepted, but the 6-digit code is shown on screen instead of emailed, so anyone who types a Babson address can sign in as it. That's fine for testing with friends, not for a real launch. To turn real emails on, set up Brevo (see "Email sending" above), then in Render's Environment tab set `EMAIL_PROVIDER=brevo`, `DEV_SHOW_CODES=false`, `BREVO_API_KEY` and `EMAIL_FROM`.
 
 Render's free plan sleeps after 15 minutes without visitors, so the first visit after a break takes about 30 seconds to load. The $7/month plan stays awake.
 
@@ -175,4 +175,5 @@ docs/screenshots/     phone screenshots of each flow
 - Chat refreshes every 3 seconds rather than using live sockets, and there are no push notifications.
 - Prohibited-item detection is a keyword list (`server/services/moderation.js`), so it can miss things and flags some harmless items for review.
 - The real AI pricing path has not been run against a live API key yet.
+- The hosted prototype shows sign-in codes on screen rather than emailing them (see above).
 - Rate limiting is per server instance and in memory.
