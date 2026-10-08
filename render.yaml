@@ -1,0 +1,45 @@
+# One-click deploy on Render (https://render.com): New > Blueprint > pick this repo.
+# Render asks for each value marked "sync: false" once, privately.
+services:
+  - type: web
+    name: campus-marketplace
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      - key: APP_NAME
+        value: "[APP NAME]"
+      # Postgres connection string from Neon (or any Postgres)
+      - key: DATABASE_URL
+        sync: false
+      # Claude API key for photo price suggestions
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      # Verification emails. Defaults are for a Gmail account with an app password.
+      - key: EMAIL_PROVIDER
+        value: smtp
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: "465"
+      - key: SMTP_SECURE
+        value: "true"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      # e.g. "[APP NAME] <yourapp@gmail.com>"
+      - key: EMAIL_FROM
+        sync: false
+      # Your own @babson.edu email(s), comma separated, to get the admin dashboard
+      - key: ADMIN_EMAILS
+        sync: false
+      # Set to "false" to launch with no demo listings
+      - key: SEED_DEMO_DATA
+        value: "true"

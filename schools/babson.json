@@ -1,0 +1,15 @@
+{
+  "slug": "babson",
+  "name": "Babson College",
+  "short_name": "Babson",
+  "email_domains": ["babson.edu"],
+  "primary_color": "#006644",
+  "primary_color_dark": "#004d33",
+  "logo_url": null,
+  "meetup_spots": [
+    { "name": "Horn Library entrance", "description": "Main doors, well lit and busy most of the day" },
+    { "name": "Reynolds Campus Center lobby", "description": "Indoors, staffed front desk nearby" },
+    { "name": "Public Safety office", "description": "Safest option for high-value items like electronics" },
+    { "name": "Webster Center front desk", "description": "Indoors, open late" }
+  ]
+}

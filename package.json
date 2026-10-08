@@ -1,0 +1,28 @@
+{
+  "name": "campus-marketplace",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A buy-and-sell marketplace for verified college students. One private marketplace per school.",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "seed": "node scripts/seed.js",
+    "reset": "node scripts/seed.js --reset",
+    "add-school": "node scripts/add-school.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.132.1",
+    "better-sqlite3": "^13.0.3",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^18.0.6",
+    "express": "^5.2.1",
+    "knex": "^3.3.0",
+    "multer": "^2.4.0",
+    "nodemailer": "^10.0.16",
+    "pg": "^8.23.1"
+  }
+}
