@@ -25,7 +25,7 @@ With no keys set, everything still works:
 
 ### Demo accounts
 
-Locally, sign in with any of these emails and use the code shown on screen. On the live site nobody receives these addresses' codes, so the demo accounts can't be signed into there.
+These exist only in a local demo; sign in with any of them and use the code shown on screen. The live site never creates them, and its admins come only from `ADMIN_EMAILS`.
 
 | Email | Who | Good for showing |
 |---|---|---|
@@ -34,7 +34,7 @@ Locally, sign in with any of these emails and use the code shown on screen. On t
 | `priya.demo@babson.edu` | Seller of the free hangers, rug, lamp | Free Stuff, Move-Out Sale |
 | `luis.demo@babson.edu` | Seller with a flagged listing | Prohibited-item review |
 | `tyler.demo@babson.edu` | Has two open reports against him | Getting banned |
-| `admin.demo@babson.edu` | **Admin** | Profile → Admin dashboard |
+| `admin.demo@babson.edu` | **Admin** (local demo only) | Profile → Admin dashboard |
 
 Any other `@babson.edu` address creates a new account. Any non-Babson email is rejected with "Right now we're only open to Babson students."
 
@@ -121,18 +121,20 @@ Set `ADMIN_EMAILS` to your own school email (comma-separate several). That accou
 
 Photos are stored in the database, so they survive restarts and redeploys with no extra storage service. Each photo is resized on the phone first (about 150-400 KB). A free Neon database (0.5 GB) holds roughly a thousand listings' worth of photos; move photos to S3 or Cloudflare R2 when you outgrow that (`server/routes/photos.js`).
 
-## Putting it online (Render, free)
+## Putting it online (Render)
 
 1. Push this folder to a GitHub repo (already done: github.com/wendle36508/campus-marketplace).
-2. At https://render.com, choose **New → Blueprint** and pick the repo. Render reads `render.yaml`, creates a free Postgres database for the app, and asks for:
+2. At https://render.com, choose **New → Blueprint** and pick the repo. Render reads `render.yaml`, creates the web service ($7/month) and a Postgres database ($6/month), and asks for:
    - `ADMIN_EMAILS`: your @babson.edu email
 3. Deploy. Your link is `https://campus-marketplace-xxxx.onrender.com`. Open it on your phone and sign in with your Babson email.
 
 **AI pricing starts in demo mode** (sample prices). To turn on real Claude pricing, add `ANTHROPIC_API_KEY` in Render's Environment tab.
 
-**Email verification is off in the hosted prototype.** Only `@babson.edu` addresses are accepted, but the 6-digit code is shown on screen instead of emailed, so anyone who types a Babson address can sign in as it. That's fine for testing with friends, not for a real launch. To turn real emails on, set up Brevo (see "Email sending" above), then in Render's Environment tab set `EMAIL_PROVIDER=brevo`, `DEV_SHOW_CODES=false`, `BREVO_API_KEY` and `EMAIL_FROM`.
+**Sign-in codes until email is set up.** With `EMAIL_PROVIDER=console`, codes are written only to Render's Logs (open the web service, click Logs, search for the email address). They are never shown on screen. To email codes, set up Brevo (see "Email sending" above), then in Render's Environment tab set `EMAIL_PROVIDER=brevo`, `BREVO_API_KEY` and `EMAIL_FROM`.
 
-Render's free plan sleeps after 15 minutes without visitors, so the first visit after a break takes about 30 seconds to load. The $7/month plan stays awake. Render's free database expires after 30 days; before then, upgrade it in Render or switch `DATABASE_URL` to a free Neon or Supabase database.
+**Safety checks.** In production the server refuses to start if `DEV_SHOW_CODES` or `SEED_DEMO_DATA` is on, or if `ADMIN_EMAILS` is empty, and `npm run seed` / `npm run reset` refuse to run.
+
+Paid instances stay awake. Take a backup from the database's **Recovery** page in Render before big changes.
 
 ## Adding another college
 
@@ -174,5 +176,5 @@ docs/screenshots/     phone screenshots of each flow
 - Chat refreshes every 3 seconds rather than using live sockets, and there are no push notifications.
 - Prohibited-item detection is a keyword list (`server/services/moderation.js`), so it can miss things and flags some harmless items for review.
 - The real AI pricing path has not been run against a live API key yet.
-- The hosted prototype shows sign-in codes on screen rather than emailing them (see above).
+- Until an email service is set up, sign-in codes are only in Render's Logs (see above).
 - Rate limiting is per server instance and in memory.

@@ -7,7 +7,7 @@ const { CATEGORIES, CONDITIONS } = require('../constants');
 const { checkText } = require('../services/moderation');
 const { suggestFromPhoto } = require('../services/ai');
 const { getPhoto, validPhoto } = require('./photos');
-const { HttpError, wrap, requireMember, hydrateListings, blockedIds, publicUser, userStats } = require('../lib');
+const { HttpError, wrap, requireMember, hydrateListings, blockedIds, publicUser, userStats, isAdmin: isAdminUser } = require('../lib');
 
 const router = express.Router();
 router.use(requireMember);
@@ -80,7 +80,7 @@ async function loadListing(req, { forWrite = false } = {}) {
   const row = await db('listings').where({ id: req.params.id, school_id: req.user.school_id }).first();
   if (!row) throw new HttpError(404, 'Listing not found.');
   const isOwner = row.seller_id === req.user.id;
-  const isAdmin = req.user.role === 'admin';
+  const isAdmin = isAdminUser(req.user);
   if (forWrite && !isOwner) throw new HttpError(403, 'Only the seller can change this listing.');
   if (!isOwner && !isAdmin) {
     if (row.status === 'removed' || row.moderation === 'flagged') throw new HttpError(404, 'Listing not found.');

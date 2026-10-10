@@ -2,7 +2,7 @@
 const express = require('express');
 const { db, newId, now } = require('../db');
 const { REPORT_REASONS } = require('../constants');
-const { HttpError, wrap, requireMember, requireAdmin, hydrateListings, publicUser, userStats } = require('../lib');
+const { HttpError, wrap, requireMember, requireAdmin, hydrateListings, publicUser, userStats, isAdmin } = require('../lib');
 
 // ---- reports + blocks (any member) -----------------------------------------
 const safety = express.Router();
@@ -138,7 +138,7 @@ admin.get('/users', wrap(async (req, res) => {
   const reportCounts = await db('reports').select('reported_user_id').count({ n: '*' }).whereIn('reported_user_id', users.map((u) => u.id)).groupBy('reported_user_id');
   const rc = Object.fromEntries(reportCounts.map((r) => [r.reported_user_id, Number(r.n)]));
   res.json({
-    users: users.map((u) => ({ ...publicUser(u, req.school, stats), email: u.email, role: u.role, status: u.status, ban_reason: u.ban_reason, report_count: rc[u.id] || 0 })),
+    users: users.map((u) => ({ ...publicUser(u, req.school, stats), email: u.email, role: isAdmin(u) ? 'admin' : 'student', status: u.status, ban_reason: u.ban_reason, report_count: rc[u.id] || 0 })),
   });
 }));
 

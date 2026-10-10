@@ -75,6 +75,11 @@ app.use((err, _req, res, _next) => {
 });
 
 async function main() {
+  const unsafe = config.unsafeProductionSettings();
+  if (unsafe.length) {
+    console.error('Refusing to start in production:\n' + unsafe.map((p) => `  - ${p}`).join('\n'));
+    process.exit(1);
+  }
   await ensureSchema();
   if (config.seedDemoData) await seedIfEmpty();
   else await seedIfEmpty({ schoolOnly: true });

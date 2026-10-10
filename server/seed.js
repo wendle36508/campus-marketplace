@@ -29,8 +29,9 @@ async function insertSchool(def) {
 }
 
 // Demo accounts use "<name>.demo@babson.edu" addresses that don't belong to
-// real students. On a live server nobody receives their codes, so they can't
-// be signed into; locally the code is shown on screen.
+// real students. Demo data is for local demos only: the server refuses to start
+// in production with SEED_DEMO_DATA on, and admin rights on the live site come
+// only from ADMIN_EMAILS.
 async function seed({ schoolOnly = false } = {}) {
   const school = await insertSchool(loadSchoolFile(path.join(__dirname, '..', 'schools', 'babson.json')));
   if (schoolOnly) return { school };
@@ -138,6 +139,7 @@ async function seedIfEmpty(opts = {}) {
 }
 
 async function resetAll() {
+  if (require('./config').isProduction) throw new Error('Refusing to reset the production database.');
   for (const t of ['ratings', 'blocks', 'reports', 'messages', 'conversations', 'listing_photos', 'listings', 'sessions', 'verification_codes', 'users', 'schools']) {
     await db(t).del();
   }
