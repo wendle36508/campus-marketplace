@@ -4,7 +4,7 @@ services:
   - type: web
     name: campus-marketplace
     runtime: node
-    plan: free
+    plan: 0.5c-512mb
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /healthz
@@ -22,25 +22,25 @@ services:
           property: connectionString
       # AI pricing runs in demo mode (sample prices) until you add an
       # ANTHROPIC_API_KEY in the Render dashboard under Environment.
-      # Prototype mode: no verification emails. The 6-digit code is shown on
-      # screen after entering a @babson.edu address. To send real emails later,
-      # set EMAIL_PROVIDER=brevo, DEV_SHOW_CODES=false, and add BREVO_API_KEY
-      # and EMAIL_FROM (see README "Email sending").
+      # No email service yet: sign-in codes are written to Render's Logs only,
+      # never shown on screen. To email codes, set EMAIL_PROVIDER=brevo and add
+      # BREVO_API_KEY and EMAIL_FROM (see README "Email sending").
+      # The server refuses to start in production if DEV_SHOW_CODES is true.
       - key: EMAIL_PROVIDER
         value: console
       - key: DEV_SHOW_CODES
-        value: "true"
+        value: "false"
       # Your own @babson.edu email(s), comma separated, to get the admin dashboard
       - key: ADMIN_EMAILS
         sync: false
-      # Set to "false" to launch with no demo listings
+      # Demo listings are for local demos only. The server refuses to start in
+      # production if this is true.
       - key: SEED_DEMO_DATA
-        value: "true"
+        value: "false"
 
-# Free Render Postgres. Render's free databases expire after 30 days; upgrade
-# it in the Render dashboard, or point DATABASE_URL at Neon/Supabase instead.
+# Render Postgres (paid, so it doesn't expire and can be backed up).
 databases:
   - name: campus-marketplace-db
-    plan: free
+    plan: 0.1c-256mb
     databaseName: marketplace
     user: marketplace

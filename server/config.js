@@ -60,4 +60,14 @@ const config = {
   sessionDays: Number(env.SESSION_DAYS || 30),
 };
 
+// Settings that must never be on for the live site.
+config.unsafeProductionSettings = () => {
+  if (!config.isProduction) return [];
+  const problems = [];
+  if (config.devShowCodes) problems.push('DEV_SHOW_CODES is on, so anyone could sign in as any student. Set DEV_SHOW_CODES=false.');
+  if (config.seedDemoData) problems.push('SEED_DEMO_DATA is on, which would create demo accounts on an empty database. Set SEED_DEMO_DATA=false.');
+  if (!config.adminEmails.length) problems.push('ADMIN_EMAILS is empty, so nobody can moderate. Set it to your school email.');
+  return problems;
+};
+
 module.exports = config;

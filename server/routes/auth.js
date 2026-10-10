@@ -4,6 +4,7 @@ const express = require('express');
 const config = require('../config');
 const { db, newId, now } = require('../db');
 const { sendVerificationEmail } = require('../services/email');
+const { getPhoto } = require('./photos');
 const {
   HttpError, wrap, sha256, schoolForEmail, activeSchools, getSchool,
   SESSION_COOKIE, requireUser, selfUser, userStats,
@@ -152,7 +153,11 @@ me.put('/', requireUser, wrap(async (req, res) => {
   if (!/^[A-Z]$/.test(initial)) throw new HttpError(400, 'Please enter your last initial (one letter).');
   if (!Number.isInteger(year) || year < thisYear - 1 || year > thisYear + 7) throw new HttpError(400, 'Please pick your graduation year.');
   const photo = req.body.photo_url ? String(req.body.photo_url) : null;
-  if (photo && !photo.startsWith('/uploads/')) throw new HttpError(400, 'Invalid photo.');
+  if (photo && photo !== req.user.photo_url) {
+    // Only a photo this student uploaded themselves.
+    const p = await getPhoto(photo);
+    if (!p || p.uploader_id !== req.user.id) throw new HttpError(400, 'Invalid photo.');
+  }
   await db('users').where({ id: req.user.id }).update({ first_name: first, last_initial: initial, grad_year: year, photo_url: photo });
   const user = await db('users').where({ id: req.user.id }).first();
   res.json({ user: selfUser(user, await getSchool(user.school_id), await userStats([user.id])) });

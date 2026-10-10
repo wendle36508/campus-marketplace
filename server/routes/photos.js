@@ -4,6 +4,7 @@
 // Only signed-in, verified students can view photos.
 const express = require('express');
 const multer = require('multer');
+const config = require('../config');
 const { db, newId, now } = require('../db');
 const { HttpError, wrap, requireUser } = require('../lib');
 
@@ -33,9 +34,10 @@ async function photoExists(url) {
   return !!(await db('photos').select('id').where({ id }).first());
 }
 
-// Photos are either uploads or the bundled demo images.
+// Photos are uploads, or locally also the bundled demo images.
 async function validPhoto(url) {
-  return /^\/img\/seed\/[a-z0-9-]+\.svg$/.test(String(url)) || photoExists(url);
+  if (!config.isProduction && /^\/img\/seed\/[a-z0-9-]+\.svg$/.test(String(url))) return true;
+  return photoExists(url);
 }
 
 const api = express.Router();

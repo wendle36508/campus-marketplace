@@ -1,6 +1,7 @@
 // Shared helpers: schools, auth middleware, and the serializers that decide
 // what one user is allowed to see about another.
 const crypto = require('crypto');
+const config = require('./config');
 const { db, parseJson } = require('./db');
 
 // ---- errors -----------------------------------------------------------------
@@ -45,6 +46,15 @@ async function schoolForEmail(email) {
   return schools.find((s) => s.email_domains.map((d) => d.toLowerCase()).includes(domain)) || null;
 }
 
+// ---- admins -----------------------------------------------------------------
+// On the live site only ADMIN_EMAILS are admins, whatever the database says, so
+// removing an address from ADMIN_EMAILS removes that admin. Locally the seeded
+// demo admin works too.
+function isAdmin(u) {
+  if (!u || u.role !== 'admin') return false;
+  return !config.isProduction || config.adminEmails.includes(String(u.email).toLowerCase());
+}
+
 // ---- auth middleware --------------------------------------------------------
 const SESSION_COOKIE = 'sid';
 
@@ -86,7 +96,7 @@ function requireMember(req, res, next) {
 function requireAdmin(req, res, next) {
   requireMember(req, res, (err) => {
     if (err) return next(err);
-    if (req.user.role !== 'admin') return next(new HttpError(403, 'Admins only.', 'forbidden'));
+    if (!isAdmin(req.user)) return next(new HttpError(403, 'Admins only.', 'forbidden'));
     next();
   });
 }
@@ -117,7 +127,7 @@ function selfUser(u, school, stats) {
   return {
     ...publicUser(u, school, stats),
     email: u.email,
-    role: u.role,
+    role: isAdmin(u) ? 'admin' : 'student',
     status: u.status,
     safety_tips_seen: !!u.safety_tips_seen,
     profile_complete: !!u.first_name,
@@ -153,7 +163,7 @@ async function hydrateListings(rows, school, viewer) {
   const sellerById = Object.fromEntries(sellers.map((s) => [s.id, s]));
   return rows.map((r) => {
     const isOwner = viewer && viewer.id === r.seller_id;
-    const isAdmin = viewer && viewer.role === 'admin';
+    const viewerIsAdmin = isAdmin(viewer);
     return {
       id: r.id,
       title: r.title,
@@ -170,7 +180,7 @@ async function hydrateListings(rows, school, viewer) {
       seller: publicUser(sellerById[r.seller_id], school, stats),
       is_mine: !!isOwner,
       // moderation details are only visible to the owner and admins
-      ...(isOwner || isAdmin
+      ...(isOwner || viewerIsAdmin
         ? {
             moderation: r.moderation,
             moderation_reasons: parseJson(r.moderation_reasons, []),
@@ -200,6 +210,7 @@ module.exports = {
   requireUser,
   requireMember,
   requireAdmin,
+  isAdmin,
   publicUser,
   selfUser,
   userStats,
