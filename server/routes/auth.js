@@ -4,6 +4,7 @@ const express = require('express');
 const config = require('../config');
 const { db, newId, now } = require('../db');
 const { sendVerificationEmail } = require('../services/email');
+const { hasAgreed } = require('./legal');
 const {
   HttpError, wrap, sha256, schoolForEmail, activeSchools, getSchool,
   SESSION_COOKIE, requireUser, selfUser, userStats,
@@ -50,7 +51,7 @@ async function upsertVerifiedUser(email) {
     await db('users').where({ email }).update({ role: 'admin' });
   }
   user = await db('users').where({ email }).first();
-  if (user.status === 'banned') throw new HttpError(403, 'This account has been suspended. Contact campus support if you think this is a mistake.', 'banned');
+  if (user.status === 'banned') throw new HttpError(403, `This account has been suspended.${config.supportEmail ? ` Email ${config.supportEmail} if you think this is a mistake.` : ''}`, 'banned');
   return user;
 }
 
@@ -140,7 +141,8 @@ const me = express.Router();
 me.get('/', wrap(async (req, res) => {
   if (!req.user) return res.json({ user: null });
   const stats = await userStats([req.user.id]);
-  res.json({ user: selfUser(req.user, req.school, stats) });
+  const agreedBefore = !!(await db('agreements').where({ user_id: req.user.id }).first());
+  res.json({ user: { ...selfUser(req.user, req.school, stats), needs_agreement: !(await hasAgreed(req.user.id)), agreed_before: agreedBefore } });
 }));
 
 me.put('/', requireUser, wrap(async (req, res) => {

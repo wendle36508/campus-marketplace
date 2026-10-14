@@ -1,5 +1,6 @@
 // My profile, other students' profiles, and the Safety Center.
 import { get } from '../api.js';
+import { legalLinks } from './legal.js';
 import { html, icon, render, avatar, verifiedBadge, listingTile, money, $, $$ } from '../ui.js';
 import { state } from '../state.js';
 import { mount, shell, navigate } from '../app.js';
@@ -42,6 +43,7 @@ export async function me() {
           <button class="list-item" id="logout">${icon('logout')}<span>Sign out</span></button>
         </div>
         <p class="tiny faint center">Signed in as ${u.email} (only you can see this)</p>
+        ${legalLinks()}
       </div>`,
   }));
 

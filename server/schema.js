@@ -147,6 +147,17 @@ async function ensureSchema() {
     t.string('created_at').notNullable();
     t.unique(['listing_id', 'rater_id']);
   });
+
+  // Each time a student agrees to the Terms (once per legal version).
+  await createTable('agreements', (t) => {
+    t.string('id').primary();
+    t.string('user_id').notNullable().index();
+    t.string('version').notNullable();
+    t.boolean('current_student').notNullable(); // "I'm a current <school> student"
+    t.string('age_choice').notNullable(); // 18_plus | 17_with_parent
+    t.string('agreed_at').notNullable();
+    t.unique(['user_id', 'version']);
+  });
 }
 
 module.exports = { ensureSchema };

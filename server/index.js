@@ -5,6 +5,8 @@ const cookieParser = require('cookie-parser');
 const config = require('./config');
 const { db } = require('./db');
 const { ensureSchema } = require('./schema');
+const legal = require('./routes/legal');
+const legalDocs = require('./legal');
 const { seedIfEmpty } = require('./seed');
 const { CATEGORIES, CONDITIONS, REPORT_REASONS, SAFETY_TIPS } = require('./constants');
 const { loadUser, getSchool, activeSchools, wrap, HttpError } = require('./lib');
@@ -45,12 +47,17 @@ app.get('/api/config', wrap(async (req, res) => {
     max_photos: config.maxPhotosPerListing,
     ai_enabled: !!config.ai.apiKey,
     dev_mode: config.devShowCodes,
+    support_email: config.supportEmail || null,
+    legal: { version: legalDocs.META.version, what_changed: legalDocs.META.what_changed },
   });
 }));
 
 // Slow down code-guessing and email spam
 app.use('/api/auth/start', rateLimit({ windowMs: 15 * 60e3, max: 10, message: 'Too many sign-in attempts. Please wait a few minutes and try again.' }));
 app.use('/api/auth/verify', rateLimit({ windowMs: 15 * 60e3, max: 30, message: 'Too many attempts. Please wait a few minutes and try again.' }));
+app.use('/api', legal.requireAgreement);
+app.use('/api/legal', legal.pages);
+app.use('/api/me/agreement', legal.agreement);
 app.use('/api/auth', auth);
 app.use('/api/me', me);
 app.use('/api', photos.api);
@@ -75,6 +82,11 @@ app.use((err, _req, res, _next) => {
 });
 
 async function main() {
+  const missing = legalDocs.missingSettings();
+  if (config.isProduction && missing.length) {
+    console.error(`Refusing to start in production: set ${missing.join(' and ')} (shown on the Terms and Privacy pages).`);
+    process.exit(1);
+  }
   await ensureSchema();
   if (config.seedDemoData) await seedIfEmpty();
   else await seedIfEmpty({ schoolOnly: true });
