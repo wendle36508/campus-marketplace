@@ -42,8 +42,8 @@ router.get('/listings', wrap(async (req, res) => {
     .whereIn('status', ['active', 'pending'])
     .whereNot('moderation', 'flagged');
   if (blocked.length) query = query.whereNotIn('seller_id', blocked);
-  // hide listings from banned sellers
-  query = query.whereNotIn('seller_id', db('users').select('id').where({ status: 'banned' }));
+  // hide listings from banned sellers and sellers whose email isn't verified
+  query = query.whereNotIn('seller_id', db('users').select('id').where({ status: 'banned' }).orWhereNull('verified_at'));
 
   if (q && String(q).trim()) {
     const words = String(q).toLowerCase().trim().split(/\s+/).slice(0, 6);

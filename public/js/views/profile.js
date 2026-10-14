@@ -11,7 +11,7 @@ function header(u, school) {
     <div class="profile-head">
       ${avatar(u, 'lg')}
       <h2>${u.display_name}</h2>
-      ${verifiedBadge(school.short_name)}
+      ${u.verified ? verifiedBadge(school.short_name) : ''}
       <p class="small muted">Class of ${u.grad_year}</p>
     </div>
     <div class="card stats">

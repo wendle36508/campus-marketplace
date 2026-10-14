@@ -62,8 +62,9 @@ router.post('/start', wrap(async (req, res) => {
   const school = await schoolForEmail(email);
   if (!school) throw new HttpError(400, notOpenMessage(await activeSchools()), 'school_not_supported');
 
-  const existing = await db('users').where({ email }).first();
-  if (existing && existing.status === 'banned') throw new HttpError(403, 'This account has been suspended.', 'banned');
+  // Banned accounts get a code like anyone else, so signed-out people can't use
+  // this to find out who is banned. The ban is shown only after a correct code
+  // (upsertVerifiedUser), i.e. only to whoever owns the inbox.
 
   const recent = await db('verification_codes').where({ email }).orderBy('created_at', 'desc').first();
   if (recent && Date.now() - new Date(recent.created_at).getTime() < RESEND_COOLDOWN_SEC * 1000) {

@@ -72,7 +72,7 @@ export async function conversation({ params: [id] }) {
       <header class="topbar with-back">
         <button class="icon-btn" data-back aria-label="Back">${icon('back')}</button>
         <a href="#/u/${c.other.id}" class="row grow" style="color:inherit;gap:10px;min-width:0">${avatar(c.other, 'sm')}
-          <div style="min-width:0"><div class="bold ellipsis" style="font-size:16px">${c.other.display_name}</div><div class="tiny" style="color:var(--brand);font-weight:650">✓ Verified ${school.short_name} Student</div></div></a>
+          <div style="min-width:0"><div class="bold ellipsis" style="font-size:16px">${c.other.display_name}</div>${c.other.verified ? html`<div class="tiny" style="color:var(--brand);font-weight:650">✓ Verified ${school.short_name} Student</div>` : ''}</div></a>
         <button class="icon-btn" id="more" aria-label="More options">${icon('more')}</button>
       </header>
       <a class="chat-listing" href="#/listing/${c.listing.id}">

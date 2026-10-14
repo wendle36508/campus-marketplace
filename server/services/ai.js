@@ -28,7 +28,7 @@ const SCHEMA = {
 function systemPrompt(schoolName) {
   return `You help ${schoolName} students price items they are selling to other students on a campus marketplace.
 
-Look at the photo and identify the item. Then suggest a fair price for the student-to-student used market, which is cheaper than retail and cheaper than eBay: buyers are students on a budget, pickup is on campus, and sellers (especially at end-of-semester move-out) usually want a quick sale.
+Look at the photo and identify the item. Then suggest a fair price for the student-to-student used market, which is cheaper than retail and cheaper than eBay: buyers are students on a budget, pickup is on campus, and sellers usually want a quick sale.
 
 Rough guide: used items in good condition typically go for 25-50% of retail; like-new items up to about 60%; worn or bulky furniture that is hard to move often goes lower. Textbooks depend heavily on edition. If the item is nearly worthless, a price of 0 with category "Free Stuff" is fine.
 

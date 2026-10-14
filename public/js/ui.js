@@ -167,7 +167,7 @@ export function listingTile(l, schoolShort) {
         <div class="price">${money(l.price)}</div>
         <div class="t">${l.title}</div>
         <div class="meta">${l.condition} · ${timeAgo(l.created_at)}</div>
-        <div class="seller">${l.seller.first_name} ${verifiedBadge(schoolShort, { iconOnly: true })}</div>
+        <div class="seller">${l.seller.first_name} ${l.seller.verified ? verifiedBadge(schoolShort, { iconOnly: true }) : ''}</div>
       </div>
     </a>`;
 }
