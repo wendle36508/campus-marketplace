@@ -126,7 +126,9 @@ router.get('/conversations/:id', wrap(async (req, res) => {
       id: c.id,
       role: c.buyer_id === uid ? 'buyer' : 'seller',
       buyer_id: c.buyer_id,
-      listing: { id: listing.id, title: listing.title, price: listing.price, status: listing.status, photo: listing.photos[0] || null, pickup_location: listing.pickup_location, sold_to_user_id: listingRow.sold_to_user_id },
+      listing: { id: listing.id, title: listing.title, price: listing.price, status: listing.status, photo: listing.photos[0] || null, pickup_location: listing.pickup_location,
+        // Only the seller learns who bought it; a buyer only learns whether it was them.
+        ...(listingRow.seller_id === uid ? { sold_to_user_id: listingRow.sold_to_user_id } : { sold_to_me: listingRow.sold_to_user_id === uid }) },
       other: publicUser(other, req.school, await userStats([otherId])),
       blocked,
       rating,

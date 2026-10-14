@@ -14,7 +14,7 @@ const store = {
 const LINK_ERRORS = {
   link_expired: 'That sign-in link has expired or was already used. Enter your email to get a new one.',
   banned: 'This account has been suspended.',
-  school_not_supported: "Right now we're only open to verified students at partner schools.",
+  school_not_supported: "Right now we're only open to students at a few schools.",
 };
 
 export async function welcome({ query }) {

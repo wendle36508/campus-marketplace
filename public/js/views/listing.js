@@ -67,7 +67,7 @@ export async function detail({ params: [id] }) {
           ${avatar(l.seller)}
           <div class="grow stack tight">
             <div class="row"><b>${l.seller.display_name}</b><span class="small muted">Class of ${l.seller.grad_year}</span></div>
-            ${verifiedBadge(school.short_name)}
+            ${l.seller.verified ? verifiedBadge(school.short_name) : ''}
           </div>
           <div class="center small"><b style="font-size:16px">👍 ${l.seller.rating.up}</b><br><span class="muted tiny">${l.seller.sold_count} sold</span></div>
         </a>
