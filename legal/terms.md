@@ -29,7 +29,7 @@ A "verified student" is someone who signed in with a {{SCHOOL_NAME}} email addre
 ## 4. We're not part of any sale
 
 - We don't buy, sell, own, hold, inspect, ship or deliver anything.
-- We don't handle payments. Students pay each other directly, outside the app (for example, cash or a payment app).
+- We don't handle payments. Students pay each other directly, outside the app (for example, cash or a payment app). We plan to add an optional way to pay in the app, with a fee for sellers. Before any fee applies, we'll tell you and ask you to agree to updated terms.
 - Every deal is only between the buyer and the seller. You decide who to trust, what to pay and how to meet.
 - We make no promises about any item. That includes its quality, its safety, whether it's legal, and whether it matches the listing. Each seller is responsible for what they post and sell.
 - We don't settle disputes between students. We may remove posts or accounts when rules are broken.

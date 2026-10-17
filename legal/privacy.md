@@ -60,6 +60,7 @@ We may share totals that don't identify anyone with {{SCHOOL_NAME}} offices, men
 
 - **Share links.** We're building a way to share a listing's link, for example in a group chat. Until it launches, people who aren't signed in can't see any listings, profiles, photos or chats. Once it launches, anyone with a listing's link will see a preview card with the cover photo, title, price, condition and the words "verified student." The card will never show your name, and messaging the seller will still require signing in. We'll tell you in the app or by email before it launches.
 - **Alert email.** We plan to let you add a personal email address for message alerts. If you add one, we'll use it only for alerts and other members won't see it. You can remove it at any time.
+- **Paying in the app.** We plan to add an optional way to pay in the app, through the payment company Stripe. Before it launches, we'll update this policy and tell you in the app or by email.
 
 ## Services that handle data for us
 
