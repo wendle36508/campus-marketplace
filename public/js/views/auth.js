@@ -1,5 +1,6 @@
 // Sign up / verify / profile setup.
 import { post, api, uploadPhoto } from '../api.js';
+import { legalLinks } from './legal.js';
 import { html, icon, toast, spinnerBtn, verifiedBadge, avatar, $ } from '../ui.js';
 import { state } from '../state.js';
 import { mount, navigate, refreshMe, shell } from '../app.js';
@@ -36,12 +37,14 @@ export async function welcome({ query }) {
           <div class="notice warn hidden" id="err">${icon('info')}<span></span></div>
           <button class="btn block" type="submit">Send my code</button>
           <p class="tiny muted center">We'll email a 6-digit code to confirm you're a student. Your email is never shown to other users.</p>
+          ${legalLinks()}
         </form>
         <div class="perks">
           <div>${icon('shield')}<span><b>Verified students only.</b> Everyone here signed up with a @${domain} email.</span></div>
           <div>${icon('sparkle')}<span><b>AI pricing.</b> Snap a photo and get a fair student price in seconds.</span></div>
           <div>${icon('pin')}<span><b>Safe campus meetups.</b> Chat in the app and meet at suggested safe spots.</span></div>
         </div>
+        <p class="tiny faint center">${state.config.app_name} is an independent student project, not affiliated with ${school ? school.name : 'any school'}.</p>
       </div>
     </div>`);
 

@@ -9,6 +9,7 @@ import * as sell from './views/sell.js';
 import * as chat from './views/chat.js';
 import * as profile from './views/profile.js';
 import * as admin from './views/admin.js';
+import * as legal from './views/legal.js';
 
 const routes = [
   { path: /^\/welcome$/, view: auth.welcome, public: true },
@@ -25,6 +26,8 @@ const routes = [
   { path: /^\/u\/([\w-]+)$/, view: profile.user, nav: 'home' },
   { path: /^\/safety$/, view: profile.safety, nav: 'profile' },
   { path: /^\/admin$/, view: admin.admin, nav: 'profile', admin: true },
+  { path: /^\/(terms|privacy|guidelines)$/, view: legal.doc, open: true },
+  { path: /^\/agree$/, view: legal.agree, needsProfile: false, agreement: true },
 ];
 
 const appEl = document.getElementById('app');
@@ -124,11 +127,16 @@ async function route() {
   const { r, m } = match;
 
   const me = state.me;
-  if (!r.public && !me) return navigate('/welcome', { replace: true });
-  if (me && me.status === 'banned') return renderBanned();
-  if (r.public && me && me.profile_complete) return navigate('/', { replace: true });
-  if (me && !me.profile_complete && r.needsProfile !== false && !r.public) return navigate('/onboarding', { replace: true });
-  if (r.admin && me.role !== 'admin') return navigate('/', { replace: true });
+  // Legal pages are readable by anyone, signed in or not.
+  if (!r.open) {
+    if (!r.public && !me) return navigate('/welcome', { replace: true });
+    if (me && me.status === 'banned') return renderBanned();
+    if (r.public && me && me.profile_complete && !me.needs_agreement) return navigate('/', { replace: true });
+    if (me && me.needs_agreement && !r.agreement) return navigate('/agree', { replace: true });
+    if (r.agreement && (!me || !me.needs_agreement)) return navigate('/', { replace: true });
+    if (me && !me.profile_complete && r.needsProfile !== false && !r.public) return navigate('/onboarding', { replace: true });
+    if (r.admin && me.role !== 'admin') return navigate('/', { replace: true });
+  }
 
   try {
     const result = await r.view({ params: m.slice(1), query, nav: r.nav });
@@ -136,6 +144,7 @@ async function route() {
   } catch (err) {
     console.error(err);
     if (err.status === 401) { state.me = null; return navigate('/welcome', { replace: true }); }
+    if (err.code === 'agreement_required') { await refreshMe(); return navigate('/agree', { replace: true }); }
     mount(shell({
       title: 'Oops', back: true, active: r.nav,
       body: html`<div class="empty"><div class="big">😕</div><p>${err.message || 'Something went wrong.'}</p><p style="margin-top:16px"><a class="btn secondary" href="#/">Back to listings</a></p></div>`,
@@ -145,7 +154,7 @@ async function route() {
 
 function renderBanned() {
   mount(html`<main class="page no-nav"><div class="empty"><div class="big">🚫</div><h2>Account suspended</h2>
-    <p style="margin-top:8px">Your account was suspended for breaking the community guidelines. Contact campus support if you think this is a mistake.</p></div></main>`);
+    <p style="margin-top:8px">Your account was suspended for breaking the community guidelines.${state.config.support_email ? html` Email ${state.config.support_email} if you think this is a mistake.` : ''}</p></div></main>`);
 }
 
 async function boot() {

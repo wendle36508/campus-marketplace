@@ -8,7 +8,7 @@ export function reportSheet({ listingId = null, userId = null, name = '' }) {
   const what = listingId ? 'this listing' : `${name || 'this student'}`;
   openSheet(String(html`
     <h2>Report ${what}</h2>
-    <p class="muted small" style="margin-bottom:12px">Reports are private. A ${state.config.school.short_name} admin reviews every one.</p>
+    <p class="muted small" style="margin-bottom:12px">Reports are private. Our moderators review every one.</p>
     <div class="stack" id="reasons">
       ${reasons.map((r) => html`<label class="list-item" style="border:1px solid var(--border);border-radius:12px"><input type="radio" name="reason" value="${r.id}" style="width:20px;height:20px;accent-color:var(--brand)"><span>${r.label}</span></label>`)}
       <textarea class="input" id="details" placeholder="Anything else we should know? (optional)" maxlength="1000"></textarea>

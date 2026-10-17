@@ -48,6 +48,10 @@ async function seed({ schoolOnly = false } = {}) {
   const tyler = mkUser('tyler.demo@babson.edu', 'Tyler', 'B', 2028, 'student', 30);
   const admin = mkUser('admin.demo@babson.edu', 'Campus', 'A', new Date().getFullYear() + 1, 'admin', 1000);
   await db('users').insert([maya, jordan, priya, luis, tyler, admin]);
+  const { META } = require('./legal');
+  await db('agreements').insert([maya, jordan, priya, luis, tyler, admin].map((u) => ({
+    id: newId(), user_id: u.id, version: META.version, current_student: true, age_choice: '18_plus', agreed_at: u.created_at,
+  })));
 
   const L = [
     [maya, 'Galanz mini fridge, 3.1 cu ft', 'Works perfectly, has a small freezer section. Cleaned and defrosted. Fits under a lofted bed.', 55, 'Dorm Essentials', 'Good', spots[1], true, 'fridge', 3],
@@ -138,7 +142,7 @@ async function seedIfEmpty(opts = {}) {
 }
 
 async function resetAll() {
-  for (const t of ['ratings', 'blocks', 'reports', 'messages', 'conversations', 'listing_photos', 'listings', 'sessions', 'verification_codes', 'users', 'schools']) {
+  for (const t of ['agreements', 'ratings', 'blocks', 'reports', 'messages', 'conversations', 'listing_photos', 'listings', 'sessions', 'verification_codes', 'users', 'schools']) {
     await db(t).del();
   }
   await seed();

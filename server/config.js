@@ -19,6 +19,9 @@ const config = {
   // Render sets RENDER_EXTERNAL_URL automatically.
   appUrl: (env.APP_URL || env.RENDER_EXTERNAL_URL || `http://localhost:${env.PORT || 3000}`).replace(/\/$/, ''),
   appName: env.APP_NAME || '[APP NAME]',
+  // Shown on the Terms and Privacy pages: who runs the app and how to reach them.
+  operatorName: env.OPERATOR_NAME || '',
+  supportEmail: env.SUPPORT_EMAIL || '',
   isProduction: env.NODE_ENV === 'production',
 
   // Database: SQLite file by default, Postgres when DATABASE_URL is set.

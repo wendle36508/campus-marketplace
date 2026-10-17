@@ -30,6 +30,12 @@ services:
         value: console
       - key: DEV_SHOW_CODES
         value: "true"
+      # Shown on the Terms and Privacy pages. The server won't start without them.
+      # OPERATOR_NAME: your full legal name. SUPPORT_EMAIL: where students reach you.
+      - key: OPERATOR_NAME
+        sync: false
+      - key: SUPPORT_EMAIL
+        sync: false
       # Your own @babson.edu email(s), comma separated, to get the admin dashboard
       - key: ADMIN_EMAILS
         sync: false
